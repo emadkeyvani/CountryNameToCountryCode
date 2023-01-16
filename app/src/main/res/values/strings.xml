@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CountryNameToCountryCode</string>
+    <string name="country_name">Country Name</string>
+    <string name="country_code">Country Code</string>
+    <string name="get_location">Get Location</string>
+
+</resources>
