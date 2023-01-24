@@ -190,7 +190,9 @@ class MainActivity : AppCompatActivity() {
                     googleApiClient!!.connect()
                 }
             })
-            .addOnConnectionFailedListener { connectionResult -> Log.d("Location error", "Location error " + connectionResult.errorCode) }.build()
+            .addOnConnectionFailedListener { connectionResult ->
+                Log.d("Location error", "Location error " + connectionResult.errorCode)
+            }.build()
         googleApiClient!!.connect()
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest())
