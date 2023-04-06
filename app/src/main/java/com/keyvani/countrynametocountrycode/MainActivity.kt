@@ -26,7 +26,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding
+
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private val locationRequestId = 100
 
@@ -34,14 +36,15 @@ class MainActivity : AppCompatActivity() {
     private val requestLocation = 199
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(_binding?.root)
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        binding.apply {
+        binding?.apply {
             btnGetLocation.setOnClickListener {
                 getLocation()
             }
@@ -105,27 +108,17 @@ class MainActivity : AppCompatActivity() {
             1
         ) as ArrayList<Address>
 
-        binding.apply {
+        binding?.apply {
             val countryName = addressList[0].countryName
+            val countryCode = addressList[0].countryCode
             tvCountryName.text = countryName
-            tvCountryCode.text = countryToCode(countryName)
+            tvCountryCode.text = countryCode
+
 
         }
 
     }
 
-    private fun countryToCode(countryName: String): String {
-        var country = ""
-        var value = ""
-        val json = loadJsonObjectFromAsset("countries.json")
-        val refArray = json!!.getJSONArray("countries")
-        for (i in 0 until refArray.length()) {
-            country = refArray.getJSONObject(i).getString("name")
-            value = refArray.getJSONObject(i).getString("value")
-            if (countryName == country) break
-        }
-        return value
-    }
 
     private fun checkForLocationPermission(): Boolean {
 
@@ -138,25 +131,8 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    private fun loadJsonObjectFromAsset(assetName: String): JSONObject? {
-        try {
-            val json = loadStringFromAsset(assetName)
-            return JSONObject(json)
-        } catch (e: Exception) {
-            Log.e("JsonUtils", e.toString())
-        }
-        return null
-    }
 
-    @Throws(Exception::class)
-    private fun loadStringFromAsset(assetName: String): String {
-        val `is`: InputStream = this.assets.open(assetName)
-        val size: Int = `is`.available()
-        val buffer = ByteArray(size)
-        `is`.read(buffer)
-        `is`.close()
-        return String(buffer)
-    }
+
 
     private fun askLocationPermission() {
         ActivityCompat.requestPermissions(
@@ -216,6 +192,11 @@ class MainActivity : AppCompatActivity() {
             .setMinUpdateIntervalMillis(1000)
             .setMaxUpdateDelayMillis(1000)
             .build()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
 }
